@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Support — BullBear Battle</title>
+  <meta name="description" content="Get help with BullBear Battle. FAQs, troubleshooting guides, and direct support for iOS and Android." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bull: #00e676; --bear: #ff1744; --gold: #ffd700;
+      --bg: #080c10; --bg2: #0d1117; --surface: #131920; --surface2: #1a2230;
+      --border: #1e2d3d; --border2: #253040;
+      --text: #e8f0fe; --text2: #8ba3c0; --text3: #4a6070;
+      --accent: #00b4d8; --accent2: #0077b6;
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-mono: 'Space Mono', monospace;
+      --font-body: 'DM Sans', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); overflow-x: hidden; line-height: 1.7; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 64px;
+      background: rgba(8,12,16,0.92); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-display); font-size: 1.5rem; letter-spacing: 0.05em;
+      background: linear-gradient(135deg, var(--bull) 0%, var(--accent) 50%, var(--bear) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
+    .nav-links a { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text2); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+
+    /* PAGE HERO */
+    .page-hero {
+      padding: 9rem 2rem 4rem;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(0,230,118,0.03) 0%, transparent 100%);
+      position: relative; overflow: hidden;
+    }
+    .page-hero-bg {
+      position: absolute; inset: 0; opacity: 0.12;
+      background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(ellipse 100% 100% at 100% 0%, black 30%, transparent 80%);
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 1rem; position: relative; }
+    .page-eyebrow { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--bull); margin-bottom: 1rem; }
+    .page-title { font-family: var(--font-display); font-size: clamp(3rem, 7vw, 5.5rem); line-height: 0.95; letter-spacing: 0.02em; margin-bottom: 1rem; }
+
+    /* SEARCH */
+    .search-bar {
+      display: flex; align-items: center; gap: 0; max-width: 540px;
+      margin-top: 2.5rem;
+      border: 1px solid var(--border2); border-radius: 4px; overflow: hidden;
+      background: var(--surface);
+    }
+    .search-bar input {
+      flex: 1; padding: 0.9rem 1.25rem;
+      background: transparent; border: none; outline: none;
+      color: var(--text); font-family: var(--font-body); font-size: 0.95rem;
+    }
+    .search-bar input::placeholder { color: var(--text3); }
+    .search-bar button {
+      padding: 0.9rem 1.5rem; background: var(--surface2);
+      border: none; border-left: 1px solid var(--border2);
+      color: var(--text2); font-family: var(--font-mono); font-size: 0.7rem;
+      letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: background 0.2s;
+    }
+    .search-bar button:hover { background: var(--border2); color: var(--text); }
+
+    /* CATEGORY GRID */
+    .cat-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1px; background: var(--border);
+      border: 1px solid var(--border); border-radius: 4px; overflow: hidden;
+      margin: 3rem 0;
+    }
+    .cat-card {
+      padding: 2rem 1.75rem; background: var(--bg2);
+      cursor: pointer; transition: background 0.2s;
+      display: flex; flex-direction: column; gap: 0.5rem;
+      text-decoration: none;
+    }
+    .cat-card:hover { background: var(--surface); }
+    .cat-icon { font-size: 1.8rem; }
+    .cat-title { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text); }
+    .cat-count { font-size: 0.8rem; color: var(--text3); }
+
+    /* SECTION */
+    section { padding: 4rem 0; }
+    .section-label { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
+    .section-title { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); line-height: 1; margin-bottom: 2rem; }
+
+    /* FAQ ACCORDION */
+    .faq-group { margin-bottom: 3rem; }
+    .faq-group-title {
+      font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--text3);
+      padding: 0 0 0.75rem 0; border-bottom: 1px solid var(--border);
+      margin-bottom: 0.5rem;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .faq-group-title span { font-size: 1rem; }
+
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .faq-q {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 0; cursor: pointer;
+      font-size: 0.95rem; font-weight: 500; color: var(--text);
+      list-style: none; user-select: none;
+      transition: color 0.2s;
+      gap: 1rem;
+    }
+    .faq-q:hover { color: var(--accent); }
+    .faq-q::after {
+      content: '+'; font-family: var(--font-mono); font-size: 1.1rem;
+      color: var(--text3); transition: transform 0.2s; flex-shrink: 0;
+    }
+    .faq-item.open .faq-q::after { transform: rotate(45deg); color: var(--accent); }
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+    .faq-item.open .faq-a { max-height: 600px; padding-bottom: 1.25rem; }
+    .faq-a p { font-size: 0.9rem; color: var(--text2); line-height: 1.8; font-weight: 300; margin-bottom: 0.75rem; }
+    .faq-a p:last-child { margin-bottom: 0; }
+    .faq-a strong { color: var(--text); }
+    .faq-a code { font-family: var(--font-mono); font-size: 0.8em; color: var(--accent); background: rgba(0,180,216,0.07); padding: 0.1em 0.4em; border-radius: 2px; }
+
+    /* STEP CARDS */
+    .steps-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+    .step-row {
+      display: grid; grid-template-columns: 80px 1fr;
+      background: var(--bg2); transition: background 0.2s;
+    }
+    .step-row:hover { background: var(--surface); }
+    .step-num-cell {
+      padding: 1.5rem 1.25rem; display: flex; align-items: center; justify-content: center;
+      border-right: 1px solid var(--border);
+      font-family: var(--font-display); font-size: 2rem; color: var(--border2);
+    }
+    .step-content { padding: 1.5rem; }
+    .step-content strong { display: block; font-size: 0.9rem; margin-bottom: 0.35rem; }
+    .step-content p { font-size: 0.875rem; color: var(--text2); font-weight: 300; }
+
+    /* PLATFORM TABS */
+    .platform-tabs { display: flex; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 4px 4px 0 0; overflow: hidden; }
+    .tab-btn {
+      flex: 1; padding: 0.85rem; text-align: center;
+      font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+      background: var(--surface); color: var(--text2); border: none; cursor: pointer; transition: all 0.2s;
+    }
+    .tab-btn.active { background: var(--bg2); color: var(--text); }
+    .tab-panel { display: none; border: 1px solid var(--border); border-top: none; border-radius: 0 0 4px 4px; padding: 2rem; background: var(--bg2); }
+    .tab-panel.active { display: block; }
+    .tab-panel ol { list-style: decimal; padding-left: 1.5rem; }
+    .tab-panel li { font-size: 0.9rem; color: var(--text2); line-height: 1.75; margin-bottom: 0.5rem; font-weight: 300; }
+    .tab-panel li strong { color: var(--text); }
+
+    /* SUPPORT CHANNELS */
+    .channels-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-top: 2rem; }
+    .channel-card {
+      border: 1px solid var(--border); border-radius: 4px; padding: 2rem;
+      background: var(--bg2); display: flex; flex-direction: column; gap: 0.75rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .channel-card:hover { border-color: var(--border2); transform: translateY(-3px); }
+    .channel-icon { font-size: 2rem; }
+    .channel-title { font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; }
+    .channel-desc { font-size: 0.875rem; color: var(--text2); font-weight: 300; flex: 1; }
+    .channel-time { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em; color: var(--text3); }
+    .btn-channel {
+      display: inline-block; margin-top: 0.5rem;
+      font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.6rem 1.25rem; background: var(--surface2); border: 1px solid var(--border2);
+      color: var(--text); text-decoration: none; border-radius: 3px; transition: all 0.2s; text-align: center;
+    }
+    .btn-channel:hover { background: var(--surface); border-color: var(--text3); }
+    .btn-channel.primary { background: var(--accent2); border-color: var(--accent2); }
+    .btn-channel.primary:hover { background: var(--accent); border-color: var(--accent); }
+
+    /* STATUS BANNER */
+    .status-bar {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1rem 1.5rem;
+      border: 1px solid rgba(0,230,118,0.2); border-radius: 3px;
+      background: rgba(0,230,118,0.04); margin-bottom: 3rem;
+      font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.05em; color: var(--bull);
+    }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--bull); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); padding: 2.5rem 2rem; margin-top: 2rem; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; }
+    .footer-brand { font-family: var(--font-display); font-size: 1.2rem; background: linear-gradient(135deg, var(--bull), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .footer-links { display: flex; gap: 2rem; list-style: none; flex-wrap: wrap; }
+    .footer-links a { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text2); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text3); letter-spacing: 0.05em; width: 100%; text-align: center; padding-top: 1.5rem; border-top: 1px solid var(--border); margin-top: 0.5rem; }
+
+    @media (max-width: 768px) { nav { padding: 0 1rem; } .nav-links { gap: 1rem; } .nav-links li:nth-child(n+4) { display: none; } }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">BullBear Battle</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="privacy_policy.html">Privacy</a></li>
+    <li><a href="support.html" class="active">Support</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-bg"></div>
+  <div class="container">
+    <p class="page-eyebrow">Help Centre</p>
+    <h1 class="page-title">Support</h1>
+    <p style="color:var(--text2); max-width:520px; font-weight:300; font-size:1rem;">
+      Everything you need to master BullBear Battle — game guides, troubleshooting, FAQs, and direct support.
+    </p>
+    <div class="search-bar">
+      <input type="text" id="faqSearch" placeholder="Search for answers… e.g. 'reset balance'" oninput="filterFAQ(this.value)" />
+      <button>Search</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div style="padding: 3rem 2rem 0;">
+  <div class="container">
+
+    <!-- STATUS -->
+    <div class="status-bar">
+      <div class="status-dot"></div>
+      All systems operational · iOS App Store · Google Play · No known issues
+    </div>
+
+    <!-- CATEGORY CARDS -->
+    <div class="cat-grid">
+      <a href="#gameplay" class="cat-card">
+        <span class="cat-icon">🎮</span>
+        <span class="cat-title">Gameplay</span>
+        <span class="cat-count">8 articles</span>
+      </a>
+      <a href="#account" class="cat-card">
+        <span class="cat-icon">⚙️</span>
+        <span class="cat-title">Settings</span>
+        <span class="cat-count">5 articles</span>
+      </a>
+      <a href="#technical" class="cat-card">
+        <span class="cat-icon">🔧</span>
+        <span class="cat-title">Technical Issues</span>
+        <span class="cat-count">6 articles</span>
+      </a>
+      <a href="#ads" class="cat-card">
+        <span class="cat-icon">📢</span>
+        <span class="cat-title">Ads &amp; Privacy</span>
+        <span class="cat-count">4 articles</span>
+      </a>
+      <a href="#progression" class="cat-card">
+        <span class="cat-icon">🏆</span>
+        <span class="cat-title">Achievements</span>
+        <span class="cat-count">5 articles</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- HOW TO PLAY -->
+<section id="how-to-play" style="border-top: 1px solid var(--border);">
+  <div class="container">
+    <p class="section-label">Getting Started</p>
+    <h2 class="section-title">How to Play</h2>
+
+    <!-- Platform Tabs -->
+    <div class="platform-tabs">
+      <button class="tab-btn active" onclick="switchTab(this,'ios')">iOS</button>
+      <button class="tab-btn" onclick="switchTab(this,'android')">Android</button>
+    </div>
+    <div class="tab-panel active" id="tab-ios">
+      <ol>
+        <li>Download <strong>BullBear Battle</strong> from the App Store (requires iOS 16.0 or later).</li>
+        <li>On first launch, complete the <strong>5-screen onboarding tutorial</strong> to learn the core mechanics.</li>
+        <li>You start with <strong>₹1,00,000 in virtual capital</strong>. No real money is ever used.</li>
+        <li>On the main screen, drag the <strong>Stop Loss</strong> and <strong>Target</strong> sliders to set your risk/reward.</li>
+        <li>Tap <strong>BUY 📈</strong> (go long) or <strong>SELL 📉</strong> (go short) to enter a trade.</li>
+        <li>Watch candlestick charts animate live. Your P&L updates in real time.</li>
+        <li>The trade ends automatically when price hits your Stop Loss or Target — or tap <strong>CLOSE</strong> to exit manually.</li>
+        <li>Review coach commentary in the result overlay, then tap <strong>Play Again</strong>.</li>
+      </ol>
+    </div>
+    <div class="tab-panel" id="tab-android">
+      <ol>
+        <li>Download <strong>BullBear Battle</strong> from Google Play (requires Android 8.0 / API 26 or later).</li>
+        <li>On first launch, complete the <strong>5-screen onboarding tutorial</strong>.</li>
+        <li>You begin with <strong>₹1,00,000 in virtual capital</strong>. No real money involved.</li>
+        <li>Set your <strong>Stop Loss %</strong> (0.5–10%) and <strong>Profit Target %</strong> (1–20%) using the sliders.</li>
+        <li>Tap <strong>BUY 📈</strong> or <strong>SELL 📉</strong>. The candlestick chart animates live.</li>
+        <li>Trade ends on SL/TP hit or manual close. Audio and haptic feedback confirm the result.</li>
+        <li>Check your <strong>Trade Journal</strong> (📓 icon) for detailed performance history.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="border-top: 1px solid var(--border);">
+  <div class="container">
+    <p class="section-label">FAQ</p>
+    <h2 class="section-title">Frequently Asked Questions</h2>
+
+    <div id="faqContainer">
+
+      <!-- GAMEPLAY -->
+      <div class="faq-group" id="gameplay">
+        <div class="faq-group-title"><span>🎮</span> Gameplay</div>
+
+        <div class="faq-item">
+          <div class="faq-q">Is BullBear Battle a real trading app? Does it use real money?</div>
+          <div class="faq-a">
+            <p><strong>No.</strong> BullBear Battle is a <strong>simulation arcade game</strong> for entertainment and education. You start with ₹1,00,000 in virtual currency. No real money is ever deposited, traded, or withdrawn. The app is not a financial product, brokerage, or investment platform.</p>
+            <p>The candlestick charts are generated by a simulated Geometric Brownian Motion price model — not live market data.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">What is a "Jackpot Round" and how does it work?</div>
+          <div class="faq-a">
+            <p>Approximately every 10 completed trades, the game triggers a <strong>Jackpot Round</strong>. During a jackpot, the price generator produces candles with 3–5× the normal move strongly in your favour — giving you a chance at an outsized win.</p>
+            <p>You'll hear the jackpot sound cue when a jackpot round begins. The jackpot effect lasts for the first few candles of the trade.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">What is a "Near-Miss Round"?</div>
+          <div class="faq-a">
+            <p>After 4+ consecutive wins, the frustration engine may trigger a <strong>Near-Miss</strong>. In a near-miss, price initially moves toward your target, then reverses and hits your stop loss — closely simulating the emotional experience of watching a winning trade turn into a loss.</p>
+            <p>This mechanic is intentional and teaches the importance of locking in profits with the <strong>Move Stop Loss</strong> feature.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">What are Market Regimes (Bull / Bear / Sideways)?</div>
+          <div class="faq-a">
+            <p>The market cycles through three regimes every 10–30 candles: <strong style="color:var(--bull)">BULL ↗</strong>, <strong style="color:var(--bear)">BEAR ↘</strong>, and <strong>SIDEWAYS ↔</strong>. The current regime is shown as a badge on the chart.</p>
+            <p>In Bull regime, there's a slight directional bias upward. In Bear, a slight bias downward. In Sideways, movement is random. Learning to read regime shifts is part of the skill development the game teaches.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">How does the "Move Stop Loss" feature work?</div>
+          <div class="faq-a">
+            <p>While a trade is active in <strong>Playing</strong> state, tap the <strong>Move SL</strong> button to open the Stop Loss sheet. You can:</p>
+            <p>• Drag the slider to a new SL price<br/>• Use presets: <strong>Break Even</strong>, <strong>Lock 50%</strong>, <strong>Lock 75%</strong></p>
+            <p>Moving your stop loss to break-even is a key risk management technique. The new SL cannot be moved beyond current price in the losing direction.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">What happens if my balance reaches ₹0?</div>
+          <div class="faq-a">
+            <p>If your virtual balance drops to ₹0 or below, the <strong>Game Over</strong> screen appears. You can restart from your chosen Starting Balance (configurable in Settings). Your statistics and achievements are preserved — only your balance resets.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">What is the Trade Journal?</div>
+          <div class="faq-a">
+            <p>Tap the 📓 icon in the top bar during gameplay to open the <strong>Trade Journal</strong>. It shows your complete trade history grouped by date, including:</p>
+            <p>• Daily P&L totals<br/>• Mini sparkline charts for each trade<br/>• Coach commentary with R:R analysis<br/>• Win/loss/near-miss/manual-close labels</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">What does the Coach say and how is commentary generated?</div>
+          <div class="faq-a">
+            <p>After every trade, the <strong>Coach Engine</strong> generates a contextual comment based on your result, your streak, your R:R ratio, and whether you moved your stop loss. Comments appear in the result overlay and are saved in the Trade Journal.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="faq-group" id="account">
+        <div class="faq-group-title"><span>⚙️</span> Settings &amp; Profile</div>
+
+        <div class="faq-item">
+          <div class="faq-q">How do I change my starting balance, position size, or timeframe?</div>
+          <div class="faq-a">
+            <p>Go to <strong>Settings → Gameplay</strong>. Available options:</p>
+            <p>• <strong>Starting Balance:</strong> ₹50,000 / ₹1,00,000 / ₹2,00,000 / ₹5,00,000<br/>• <strong>Position Size:</strong> ₹1,000 / ₹2,000 / ₹5,000 / ₹10,000<br/>• <strong>Timeframe:</strong> 2 Min (Scalping) / 5 Min (Day) / 15 Min (Swing)<br/>• <strong>Difficulty:</strong> Easy / Normal / Hard</p>
+            <p>Changes to Starting Balance take effect on the next Game Over + restart, not immediately.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">How do I reset my balance, stats, or achievements?</div>
+          <div class="faq-a">
+            <p>Navigate to <strong>Settings → Danger Zone</strong>:</p>
+            <p>• <strong>Reset Statistics</strong> — clears all performance metrics, keeps balance and achievements<br/>• <strong>Reset Achievements</strong> — resets all achievement progress, keeps balance and stats<br/>• <strong>Reset Everything</strong> — full factory reset, restores starting balance and wipes all data</p>
+            <p>All reset actions require a confirmation dialog to prevent accidental deletion.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">How do I change my Trader Name or Persona?</div>
+          <div class="faq-a">
+            <p>Go to <strong>Settings → Player Profile</strong>. You can edit your display name (shown in the header) and choose a Trader Persona: Scalper, Day Trader, Swing Trader, Whale, Gambler, or Hedge Fund. Each persona has a unique accent colour.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">How do I turn off sound or haptics?</div>
+          <div class="faq-a">
+            <p>Go to <strong>Settings → Audio</strong> to toggle Sound Effects and Text-to-Speech independently. Go to <strong>Settings → Haptics</strong> to toggle vibration feedback. All changes take effect immediately.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Is there a dark mode / light mode toggle?</div>
+          <div class="faq-a">
+            <p>BullBear Battle is designed with a <strong>dark-first aesthetic</strong> optimised for trading chart readability. A light mode toggle is available in <strong>Settings → Display → Dark Theme</strong>.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TECHNICAL -->
+      <div class="faq-group" id="technical">
+        <div class="faq-group-title"><span>🔧</span> Technical Issues</div>
+
+        <div class="faq-item">
+          <div class="faq-q">The app crashed / freezes on launch. What do I do?</div>
+          <div class="faq-a">
+            <p><strong>Try these steps in order:</strong></p>
+            <p>1. <strong>Force-quit and relaunch</strong> the app.<br/>2. <strong>Restart your device.</strong><br/>3. Ensure you have the <strong>latest version</strong> of the app from App Store / Google Play.<br/>4. Free up storage — the app requires at least 100 MB of free space.<br/>5. If the issue persists, <strong>uninstall and reinstall</strong> the app (note: this will reset all local data).</p>
+            <p>Still crashing? Please <a href="contact.html">contact us</a> with your device model and OS version.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">My game data / balance disappeared after an update.</div>
+          <div class="faq-a">
+            <p>Game data is stored in <code>SharedPreferences</code> (Android) or <code>UserDefaults</code> (iOS). Data is preserved through updates. However, uninstalling and reinstalling the app <strong>will erase all local data</strong> as this is standard OS behaviour.</p>
+            <p>If data was lost during an update (not an uninstall), please <a href="contact.html">contact support</a> with your app version details and we'll investigate.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Sound / Text-to-Speech isn't working.</div>
+          <div class="faq-a">
+            <p>• Check that your device isn't in <strong>Silent / Do Not Disturb</strong> mode.<br/>• Ensure <strong>media volume</strong> (not ringtone volume) is turned up.<br/>• Check <strong>Settings → Audio</strong> in-app to confirm Sound Effects and TTS are enabled.<br/>• On Android: ensure the <strong>en_IN</strong> (English India) TTS language pack is installed via System Settings → Text-to-Speech.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Haptic vibration isn't working on Android.</div>
+          <div class="faq-a">
+            <p>BullBear Battle requires the <code>VIBRATE</code> permission to provide haptic feedback. Ensure:<br/>• <strong>Settings → Haptics → Vibration</strong> is enabled in-app.<br/>• System vibration is not disabled in device settings.<br/>• Your device supports <code>VibrationEffect</code> (API 26+, which all supported devices do).</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">The candlestick chart is not animating or looks wrong.</div>
+          <div class="faq-a">
+            <p>• Go to <strong>Settings → Display → Animations</strong> and ensure animations are enabled.<br/>• Try toggling the setting off and on.<br/>• A chart rendering issue may occur if the app has been in the background for a long time — force-quit and relaunch.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Which devices and OS versions are supported?</div>
+          <div class="faq-a">
+            <p><strong>iOS:</strong> iPhone and iPad running <strong>iOS 16.0 or later</strong>. Optimised for iPhone 14 and newer.<br/><strong>Android:</strong> Devices running <strong>Android 8.0 (API 26) or later</strong>. Targets Android 15 (API 35). Covers 95%+ of active Android devices.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADS -->
+      <div class="faq-group" id="ads">
+        <div class="faq-group-title"><span>📢</span> Ads &amp; Privacy</div>
+
+        <div class="faq-item">
+          <div class="faq-q">Why does the app show ads? How often?</div>
+          <div class="faq-a">
+            <p>BullBear Battle is <strong>free to play</strong>. Interstitial ads (via Google AdMob) are shown after a set number of completed trades to support continued development. Ads are not shown during active gameplay — only between rounds.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">How do I opt out of personalised advertising?</div>
+          <div class="faq-a">
+            <p>Go to <strong>Settings → Privacy → Ad Preferences</strong> inside the app to review or withdraw your advertising consent. You can switch from personalised to contextual (non-personalised) ads at any time.</p>
+            <p>On <strong>Android</strong>, you can also reset or opt out via <strong>Google Settings → Ads → Opt out of Ads Personalisation</strong>.<br/>On <strong>iOS</strong>, manage tracking via <strong>Settings → Privacy & Security → Tracking</strong>.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Does the app collect my personal data?</div>
+          <div class="faq-a">
+            <p>No personal data is collected by us. All gameplay data is stored <strong>locally on your device only</strong>. The only data flow to external servers is via Google AdMob for advertising purposes. Please see our full <a href="privacy_policy.html">Privacy Policy</a> for details.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">I'm in the EU. What about GDPR consent?</div>
+          <div class="faq-a">
+            <p>On first launch in EU/EEA/UK, the app presents a <strong>GDPR consent dialog</strong> via Google's User Messaging Platform (UMP). Personalised ads are only enabled if you explicitly consent. You can change this decision at any time in Settings → Privacy → Ad Preferences.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACHIEVEMENTS -->
+      <div class="faq-group" id="progression">
+        <div class="faq-group-title"><span>🏆</span> Achievements &amp; Progression</div>
+
+        <div class="faq-item">
+          <div class="faq-q">How many achievements are there and how do I unlock them?</div>
+          <div class="faq-a">
+            <p>There are <strong>26 achievements</strong> in four tiers: Bronze, Silver, Gold, and Platinum. They cover trade count, win streaks, balance milestones, jackpot wins, direction specialisation, and more. Achievements are checked automatically after every trade — no manual claiming required.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">What are the 10 career levels?</div>
+          <div class="faq-a">
+            <p>Your career progresses through 10 levels based on cumulative performance. Each level unlocks new features: chart cosmetic themes, leverage options, and expanded position sizing. Level-up celebrations appear with a full-screen animation when you reach a new tier.</p>
+            <p>Levels range from <strong>Rookie Trader (L1)</strong> to <strong>Hedge Fund Legend (L10)</strong>.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Are the leaderboards online or local?</div>
+          <div class="faq-a">
+            <p>BullBear Battle features a <strong>local leaderboard only</strong> — no server connection, no comparison with other players. The 6 leaderboard categories (Best Win, Best Streak, Most Profit, Most Trades, Biggest Balance, Best Win Rate) track your personal bests.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">My achievement progress reset. Why?</div>
+          <div class="faq-a">
+            <p>Achievement progress is stored locally. It can reset if you used <strong>Settings → Reset Achievements</strong> or <strong>Reset Everything</strong>, or if you uninstalled and reinstalled the app. If neither of those occurred, please <a href="contact.html">contact us</a> with your device details.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">What are the 6 Leaderboard categories?</div>
+          <div class="faq-a">
+            <p>• <strong>Best Win</strong> — highest single-trade profit (₹)<br/>• <strong>Best Streak</strong> — longest consecutive win streak<br/>• <strong>Most Profit</strong> — total accumulated profit<br/>• <strong>Most Trades</strong> — total trades completed<br/>• <strong>Biggest Balance</strong> — peak balance ever reached<br/>• <strong>Best Win Rate</strong> — highest win % (minimum 20 trades)</p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /#faqContainer -->
+
+    <!-- No results message -->
+    <div id="noResults" style="display:none; text-align:center; padding:3rem; color:var(--text3); font-family:var(--font-mono); font-size:0.8rem; letter-spacing:0.1em;">
+      NO RESULTS FOUND · TRY A DIFFERENT SEARCH OR <a href="contact.html" style="color:var(--accent);">CONTACT SUPPORT</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- SUPPORT CHANNELS -->
+<section style="background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="container">
+    <p class="section-label">Get Help</p>
+    <h2 class="section-title">Contact Support</h2>
+    <p style="color:var(--text2); max-width:500px; font-weight:300;">Can't find what you're looking for? Reach out directly.</p>
+
+    <div class="channels-grid">
+      <div class="channel-card">
+        <span class="channel-icon">📧</span>
+        <p class="channel-title">Email Support</p>
+        <p class="channel-desc">Send us a detailed message. Best for bug reports, data issues, and feature requests.</p>
+        <span class="channel-time">Response within 48 hours (business days)</span>
+        <a href="contact.html" class="btn-channel primary">Send a Message →</a>
+      </div>
+      <div class="channel-card">
+        <span class="channel-icon">⭐</span>
+        <p class="channel-title">App Store Review</p>
+        <p class="channel-desc">Found a bug? Leave a review on the App Store or Play Store — we read every one.</p>
+        <span class="channel-time">Monitored daily</span>
+        <a href="#" class="btn-channel">App Store →</a>
+      </div>
+      <div class="channel-card">
+        <span class="channel-icon">🔒</span>
+        <p class="channel-title">Privacy Requests</p>
+        <p class="channel-desc">Data access, deletion, or GDPR/CCPA rights requests handled here.</p>
+        <span class="channel-time">Response within 30 days</span>
+        <a href="privacy_policy.html" class="btn-channel">Privacy Policy →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <span class="footer-brand">BullBear Battle</span>
+    <ul class="footer-links">
+      <li><a href="privacy_policy.html">Privacy Policy</a></li>
+      <li><a href="support.html" class="active">Support</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <p class="footer-copy">© 2026 Balwinder Singh. BullBear Battle is not a financial product. All trading is simulated.</p>
+  </div>
+</footer>
+
+<script>
+  // Tab switching
+  function switchTab(btn, id) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + id).classList.add('active');
+  }
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', () => {
+      const item = q.parentElement;
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+  // FAQ search
+  function filterFAQ(val) {
+    const v = val.toLowerCase().trim();
+    let anyVisible = false;
+    document.querySelectorAll('.faq-item').forEach(item => {
+      const text = item.textContent.toLowerCase();
+      const show = !v || text.includes(v);
+      item.style.display = show ? '' : 'none';
+      if (show) anyVisible = true;
+    });
+    document.querySelectorAll('.faq-group').forEach(g => {
+      const visible = [...g.querySelectorAll('.faq-item')].some(i => i.style.display !== 'none');
+      g.style.display = visible ? '' : 'none';
+    });
+    document.getElementById('noResults').style.display = anyVisible ? 'none' : 'block';
+  }
+</script>
+</body>
+</html>
