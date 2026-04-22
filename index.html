@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BullBear Battle — Real-Time Trading Simulation Game</title>
+  <meta name="description" content="BullBear Battle is a real-time trading simulation arcade game for iOS and Android. Pick Bull or Bear, set your risk, and trade Indian markets — no real money involved." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bull: #00e676;
+      --bear: #ff1744;
+      --gold: #ffd700;
+      --bg: #080c10;
+      --bg2: #0d1117;
+      --surface: #131920;
+      --surface2: #1a2230;
+      --border: #1e2d3d;
+      --border2: #253040;
+      --text: #e8f0fe;
+      --text2: #8ba3c0;
+      --text3: #4a6070;
+      --accent: #00b4d8;
+      --accent2: #0077b6;
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-mono: 'Space Mono', monospace;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 64px;
+      background: rgba(8,12,16,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      letter-spacing: 0.05em;
+      background: linear-gradient(135deg, var(--bull) 0%, var(--accent) 50%, var(--bear) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+      align-items: center;
+    }
+
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text2);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--text);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.3;
+      mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 40%, transparent 100%);
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 800px;
+      height: 800px;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(ellipse, rgba(0,230,118,0.06) 0%, rgba(0,180,216,0.04) 30%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-glow-bear {
+      position: absolute;
+      width: 600px;
+      height: 400px;
+      border-radius: 50%;
+      bottom: 10%;
+      right: -10%;
+      background: radial-gradient(ellipse, rgba(255,23,68,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* live chart behind hero */
+    .hero-chart {
+      position: absolute;
+      inset: 0;
+      opacity: 0.12;
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .hero-eyebrow::before, .hero-eyebrow::after {
+      content: '';
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.5;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(4rem, 12vw, 9rem);
+      line-height: 0.9;
+      letter-spacing: 0.02em;
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title .bull { color: var(--bull); }
+    .hero-title .vs {
+      font-size: 0.45em;
+      color: var(--text3);
+      display: block;
+      letter-spacing: 0.3em;
+    }
+    .hero-title .bear { color: var(--bear); }
+
+    .hero-subtitle {
+      font-size: 1.1rem;
+      color: var(--text2);
+      max-width: 540px;
+      line-height: 1.7;
+      position: relative;
+      margin-bottom: 3rem;
+      font-weight: 300;
+    }
+
+    .hero-badges {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 3rem;
+      position: relative;
+    }
+
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.4rem 1rem;
+      border-radius: 2px;
+      border: 1px solid var(--border2);
+      color: var(--text2);
+      background: var(--surface);
+    }
+
+    .badge.green { border-color: rgba(0,230,118,0.3); color: var(--bull); background: rgba(0,230,118,0.05); }
+    .badge.red   { border-color: rgba(255,23,68,0.3);  color: var(--bear); background: rgba(255,23,68,0.05); }
+    .badge.gold  { border-color: rgba(255,215,0,0.3);  color: var(--gold); background: rgba(255,215,0,0.05); }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      position: relative;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.85rem 2rem;
+      border-radius: 3px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--bull);
+      color: #000;
+      font-weight: 700;
+    }
+    .btn-primary:hover { background: #33ff99; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,230,118,0.3); }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border2);
+    }
+    .btn-secondary:hover { border-color: var(--text2); background: var(--surface); transform: translateY(-2px); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--bear);
+      border: 1px solid rgba(255,23,68,0.3);
+    }
+    .btn-ghost:hover { background: rgba(255,23,68,0.07); transform: translateY(-2px); }
+
+    /* ── SECTION BASE ── */
+    section {
+      position: relative;
+      padding: 6rem 2rem;
+      z-index: 1;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      line-height: 1;
+      letter-spacing: 0.02em;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-desc {
+      font-size: 1rem;
+      color: var(--text2);
+      max-width: 560px;
+      line-height: 1.75;
+      font-weight: 300;
+    }
+
+    /* ── FEATURES GRID ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .feature-card {
+      padding: 2.5rem;
+      background: var(--bg2);
+      transition: background 0.2s;
+    }
+
+    .feature-card:hover { background: var(--surface); }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 1.25rem;
+      display: block;
+    }
+
+    .feature-title {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+
+    .feature-desc {
+      font-size: 0.9rem;
+      color: var(--text2);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 5rem;
+    }
+
+    .stat-cell {
+      padding: 2rem 1.5rem;
+      background: var(--surface);
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 3rem;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--bull), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-top: 0.4rem;
+    }
+
+    /* ── TICKER ── */
+    .ticker-wrap {
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      padding: 0.85rem 0;
+      margin: 4rem 0;
+    }
+
+    .ticker-track {
+      display: flex;
+      gap: 3rem;
+      white-space: nowrap;
+      animation: ticker 25s linear infinite;
+    }
+
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .ticker-item {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text2);
+    }
+
+    .tick-up   { color: var(--bull); }
+    .tick-down { color: var(--bear); }
+
+    /* ── HOW IT WORKS ── */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .step {
+      position: relative;
+      padding: 2rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--bg2);
+    }
+
+    .step-num {
+      font-family: var(--font-display);
+      font-size: 4rem;
+      line-height: 1;
+      color: var(--border2);
+      margin-bottom: 1rem;
+    }
+
+    .step-title {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .step-desc {
+      font-size: 0.875rem;
+      color: var(--text2);
+      line-height: 1.65;
+      font-weight: 300;
+    }
+
+    /* ── ACHIEVEMENTS ── */
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 3rem;
+    }
+
+    .ach-card {
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      background: var(--bg2);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .ach-card:hover { border-color: var(--border2); transform: translateY(-3px); }
+
+    .ach-tier {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .ach-tier.bronze { color: #cd7f32; }
+    .ach-tier.silver { color: #c0c0c0; }
+    .ach-tier.gold   { color: var(--gold); }
+    .ach-tier.platinum { color: var(--accent); }
+
+    .ach-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .ach-desc {
+      font-size: 0.8rem;
+      color: var(--text2);
+      font-weight: 300;
+    }
+
+    /* ── DOWNLOAD SECTION ── */
+    .download-section {
+      background: linear-gradient(135deg, rgba(0,230,118,0.04) 0%, rgba(0,180,216,0.03) 50%, rgba(255,23,68,0.04) 100%);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5rem 3rem;
+      text-align: center;
+    }
+
+    .store-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 2.5rem;
+    }
+
+    .store-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.9rem 1.75rem;
+      border: 1px solid var(--border2);
+      border-radius: 4px;
+      background: var(--surface2);
+      color: var(--text);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .store-btn:hover { background: var(--surface); border-color: var(--text3); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
+
+    .store-btn-icon { font-size: 1.8rem; }
+    .store-btn-text { text-align: left; }
+    .store-btn-sub { font-size: 0.65rem; color: var(--text2); letter-spacing: 0.05em; }
+    .store-btn-name { font-family: var(--font-mono); font-size: 0.9rem; font-weight: 700; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 3rem 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .footer-brand {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      background: linear-gradient(135deg, var(--bull), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text2);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--text); }
+
+    .footer-copy {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text3);
+      letter-spacing: 0.05em;
+      width: 100%;
+      text-align: center;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      margin-top: 0.5rem;
+    }
+
+    /* ── DISCLAIMER ── */
+    .disclaimer-banner {
+      background: rgba(255,215,0,0.05);
+      border: 1px solid rgba(255,215,0,0.15);
+      border-radius: 3px;
+      padding: 1rem 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+      color: rgba(255,215,0,0.7);
+      text-align: center;
+      margin-top: 3rem;
+    }
+
+    /* ── LIVE CANDLE ANIMATION ── */
+    .candle-demo {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 120px;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--bg2);
+      overflow: hidden;
+    }
+
+    .candle-bar {
+      flex: 1;
+      min-width: 8px;
+      max-width: 18px;
+      border-radius: 1px;
+      animation: growIn 0.3s ease-out forwards;
+      position: relative;
+    }
+
+    @keyframes growIn {
+      from { transform: scaleY(0); transform-origin: bottom; }
+      to   { transform: scaleY(1); transform-origin: bottom; }
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .anim { opacity: 0; animation: fadeUp 0.7s ease forwards; }
+    .anim-d1 { animation-delay: 0.1s; }
+    .anim-d2 { animation-delay: 0.25s; }
+    .anim-d3 { animation-delay: 0.4s; }
+    .anim-d4 { animation-delay: 0.55s; }
+    .anim-d5 { animation-delay: 0.7s; }
+
+    /* Candlestick SVG chart in hero */
+    .hero-chart-svg {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      height: 45%;
+      opacity: 0.1;
+    }
+
+    /* ── PLATFORM BADGES ── */
+    .platform-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+
+    .platform-pill {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      padding: 0.35rem 0.85rem;
+      border-radius: 100px;
+      border: 1px solid var(--border2);
+      color: var(--text3);
+    }
+
+    /* ── REGIME INDICATOR ── */
+    .regime-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      padding: 0.3rem 0.7rem;
+      border-radius: 2px;
+    }
+
+    .regime-bull { background: rgba(0,230,118,0.1); color: var(--bull); border: 1px solid rgba(0,230,118,0.2); }
+    .regime-bear { background: rgba(255,23,68,0.1);  color: var(--bear); border: 1px solid rgba(255,23,68,0.2); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 0 1rem; }
+      .nav-links { gap: 1rem; }
+      .nav-links li:nth-child(n+4) { display: none; }
+      section { padding: 4rem 1.25rem; }
+      .download-section { padding: 3rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">BullBear Battle</a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="privacy_policy.html">Privacy</a></li>
+    <li><a href="support.html">Support</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow-bear"></div>
+
+  <!-- Decorative candlestick SVG -->
+  <svg class="hero-chart-svg" viewBox="0 0 1200 300" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- candles drawn programmatically by JS below -->
+  </svg>
+
+  <p class="hero-eyebrow anim anim-d1">Real-Time Trading Simulation</p>
+
+  <h1 class="hero-title anim anim-d2">
+    <span class="bull">BULL</span>
+    <span class="vs">VS</span>
+    <span class="bear">BEAR</span>
+  </h1>
+
+  <p class="hero-subtitle anim anim-d3">
+    Pick your direction. Set your risk. Watch the market breathe. <br/>
+    Master the <em>psychology of trading</em> — no real money, all real emotion.
+  </p>
+
+  <div class="hero-badges anim anim-d4">
+    <span class="badge green">📈 Bull Mode</span>
+    <span class="badge red">📉 Bear Mode</span>
+    <span class="badge gold">🏆 26 Achievements</span>
+    <span class="badge">₹ Indian Market</span>
+    <span class="badge">🎮 Arcade Game</span>
+  </div>
+
+  <div class="hero-cta anim anim-d5">
+    <a href="#download" class="btn btn-primary">↓ Download Now</a>
+    <a href="#how-it-works" class="btn btn-secondary">How It Works</a>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track" id="ticker"></div>
+</div>
+
+<!-- FEATURES -->
+<section>
+  <div class="container">
+    <p class="section-label">Core Features</p>
+    <h2 class="section-title">Built for the<br/>serious player</h2>
+    <p class="section-desc">Every mechanic is designed to teach you what markets feel like — without risking a single rupee.</p>
+
+    <div class="features-grid" style="margin-top: 3rem;">
+      <div class="feature-card">
+        <span class="feature-icon">📊</span>
+        <p class="feature-title">Live Candlestick Charts</p>
+        <p class="feature-desc">Animated OHLC candles powered by a Geometric Brownian Motion price model. Regime gradients shift between Bull, Bear, and Sideways markets.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🎯</span>
+        <p class="feature-title">Set Your Risk</p>
+        <p class="feature-desc">Drag sliders to set Stop Loss (0.5–10%) and Profit Target (1–20%). Real R:R ratio shown in real time. Risk what you can emotionally afford.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🧠</span>
+        <p class="feature-title">Frustration Engine</p>
+        <p class="feature-desc">Adaptive bias adjusts to your streak. Jackpot rounds, near-miss sequences, and streak bonuses create a genuine arc of emotion every session.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📓</span>
+        <p class="feature-title">Trade Journal</p>
+        <p class="feature-desc">Every trade logged with coach commentary, sparkline mini-charts, and daily P&L totals. Review your patterns. Understand your edge.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🏆</span>
+        <p class="feature-title">26 Achievements</p>
+        <p class="feature-desc">Bronze to Platinum. Win streaks, balance milestones, jackpot hunts, risk management records. Your legacy, earned trade by trade.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📈</span>
+        <p class="feature-title">Career Progression</p>
+        <p class="feature-desc">10-level journey from Rookie Trader to Hedge Fund Legend. Unlock chart themes, leverage, and flexible position sizing as you grow.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔊</span>
+        <p class="feature-title">Audio + TTS</p>
+        <p class="feature-desc">Indian English text-to-speech announces every result. Distinct sound design for wins, losses, jackpots, and profit milestones.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📱</span>
+        <p class="feature-title">iOS &amp; Android</p>
+        <p class="feature-desc">SwiftUI on iOS. Jetpack Compose on Android. Full haptic feedback. Dark-first design. Optimised for Indian market hours.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔒</span>
+        <p class="feature-title">No Real Money</p>
+        <p class="feature-desc">Start with ₹1,00,000 in virtual capital. Pure simulation. No deposits, no withdrawals, no real financial risk. Just pure skill-building.</p>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar">
+      <div class="stat-cell">
+        <div class="stat-num">43+</div>
+        <div class="stat-label">Stats Tracked</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">26</div>
+        <div class="stat-label">Achievements</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">10</div>
+        <div class="stat-label">Career Levels</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">6</div>
+        <div class="stat-label">Leaderboards</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">5</div>
+        <div class="stat-label">Market Regimes</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div class="container">
+    <p class="section-label">Gameplay</p>
+    <h2 class="section-title">How to Play</h2>
+    <p class="section-desc">A round lasts as long as the market wants it to. Your nerve is the only clock that matters.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <p class="step-title">Pick Direction</p>
+        <p class="step-desc">Tap <strong style="color:var(--bull)">BUY 📈</strong> if you think price rises. Tap <strong style="color:var(--bear)">SELL 📉</strong> if you think it falls.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <p class="step-title">Set Your Risk</p>
+        <p class="step-desc">Drag sliders to choose your Stop Loss and Profit Target. The R:R ratio updates live.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <p class="step-title">Watch the Market</p>
+        <p class="step-desc">Candles animate live. Your P&amp;L updates every tick. Regimes shift from Bull to Bear to Sideways.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <p class="step-title">Win or Hold</p>
+        <p class="step-desc">Let SL/TP execute automatically — or manually close at any time. Every decision is a lesson.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">05</div>
+        <p class="step-title">Review &amp; Grow</p>
+        <p class="step-desc">Read the coach's commentary. Study your journal. Climb the leaderboards. Level up your career.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACHIEVEMENTS PREVIEW -->
+<section>
+  <div class="container">
+    <p class="section-label">Achievements</p>
+    <h2 class="section-title">Your Legacy,<br/>Trade by Trade</h2>
+
+    <div class="achievements-grid">
+      <div class="ach-card">
+        <span class="ach-tier bronze">● Bronze</span>
+        <span class="ach-name">First Blood</span>
+        <span class="ach-desc">Complete your first trade</span>
+      </div>
+      <div class="ach-card">
+        <span class="ach-tier silver">● Silver</span>
+        <span class="ach-name">Lucky Five</span>
+        <span class="ach-desc">Win 5 trades in a row</span>
+      </div>
+      <div class="ach-card">
+        <span class="ach-tier gold">● Gold</span>
+        <span class="ach-name">On Fire 🔥</span>
+        <span class="ach-desc">Win 10 trades in a row</span>
+      </div>
+      <div class="ach-card">
+        <span class="ach-tier platinum">● Platinum</span>
+        <span class="ach-name">Unstoppable</span>
+        <span class="ach-desc">Win 20 trades in a row</span>
+      </div>
+      <div class="ach-card">
+        <span class="ach-tier bronze">● Bronze</span>
+        <span class="ach-name">Jackpot!</span>
+        <span class="ach-desc">Win your first jackpot round</span>
+      </div>
+      <div class="ach-card">
+        <span class="ach-tier gold">● Gold</span>
+        <span class="ach-name">Comeback King</span>
+        <span class="ach-desc">Win after 5 consecutive losses</span>
+      </div>
+      <div class="ach-card">
+        <span class="ach-tier silver">● Silver</span>
+        <span class="ach-name">Bull Whisperer</span>
+        <span class="ach-desc">Win 20 BUY trades</span>
+      </div>
+      <div class="ach-card">
+        <span class="ach-tier platinum">● Platinum</span>
+        <span class="ach-name">Millionaire 💰</span>
+        <span class="ach-desc">Reach ₹10,00,000 balance</span>
+      </div>
+    </div>
+
+    <p style="margin-top:2rem; font-family: var(--font-mono); font-size:0.7rem; color: var(--text3); letter-spacing: 0.1em;">+18 MORE ACHIEVEMENTS TO DISCOVER</p>
+  </div>
+</section>
+
+<!-- DOWNLOAD -->
+<section id="download">
+  <div class="container">
+    <div class="download-section">
+      <p class="section-label" style="text-align:center;">Available Now</p>
+      <h2 class="section-title" style="text-align:center;">Start Trading.<br/>Zero Risk.</h2>
+      <p style="color:var(--text2); max-width:420px; margin:1rem auto 0; font-weight:300;">
+        Free to download. No account required. No real money. Just you, the market, and your nerve.
+      </p>
+
+      <div class="store-buttons">
+        <a href="#" class="store-btn">
+          <span class="store-btn-icon"></span>
+          <span class="store-btn-text">
+            <span class="store-btn-sub">Download on the</span>
+            <span class="store-btn-name">App Store</span>
+          </span>
+        </a>
+        <a href="#" class="store-btn">
+          <span class="store-btn-icon">▶</span>
+          <span class="store-btn-text">
+            <span class="store-btn-sub">Get it on</span>
+            <span class="store-btn-name">Google Play</span>
+          </span>
+        </a>
+      </div>
+
+      <div class="platform-row" style="justify-content:center; margin-top:1.5rem;">
+        <span class="platform-pill">iOS 16+</span>
+        <span class="platform-pill">Android 8.0+</span>
+        <span class="platform-pill">Free to Play</span>
+        <span class="platform-pill">No Real Money</span>
+        <span class="platform-pill">GDPR Compliant</span>
+      </div>
+    </div>
+
+    <div class="disclaimer-banner">
+      ⚠ BullBear Battle is a simulation game for entertainment &amp; education only. No real money is involved. Virtual currency has no real-world value. Not a financial product.
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <span class="footer-brand">BullBear Battle</span>
+    <ul class="footer-links">
+      <li><a href="privacy_policy.html">Privacy Policy</a></li>
+      <li><a href="support.html">Support</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <p class="footer-copy">
+      © 2026 Balwinder Singh. BullBear Battle is not a financial product. All trading is simulated.
+    </p>
+  </div>
+</footer>
+
+<script>
+  // ── TICKER
+  const tickers = [
+    { sym: 'NIFTY 50',   val: '24,870.15', dir: 'up',   chg: '+1.2%' },
+    { sym: 'SENSEX',     val: '81,450.30', dir: 'up',   chg: '+0.8%' },
+    { sym: 'BANKNIFTY',  val: '52,130.45', dir: 'down', chg: '−0.4%' },
+    { sym: 'RELIANCE',   val: '2,940.00',  dir: 'up',   chg: '+2.1%' },
+    { sym: 'TCS',        val: '3,780.55',  dir: 'down', chg: '−0.6%' },
+    { sym: 'INFY',       val: '1,650.20',  dir: 'up',   chg: '+1.4%' },
+    { sym: 'HDFC BANK',  val: '1,890.75',  dir: 'up',   chg: '+0.9%' },
+    { sym: 'WIPRO',      val: '462.30',    dir: 'down', chg: '−1.1%' },
+    { sym: 'GOLD',       val: '₹73,200',   dir: 'up',   chg: '+0.3%' },
+    { sym: 'USD/INR',    val: '83.62',     dir: 'down', chg: '−0.1%' },
+  ];
+
+  const track = document.getElementById('ticker');
+  const doubled = [...tickers, ...tickers];
+  doubled.forEach(t => {
+    const el = document.createElement('span');
+    el.className = 'ticker-item';
+    const arrow = t.dir === 'up' ? '▲' : '▼';
+    const cls = t.dir === 'up' ? 'tick-up' : 'tick-down';
+    el.innerHTML = `<b style="color:var(--text2)">${t.sym}</b> ${t.val} <span class="${cls}">${arrow} ${t.chg}</span>`;
+    track.appendChild(el);
+  });
+
+  // ── HERO CANDLE SVG
+  const svgEl = document.querySelector('.hero-chart-svg');
+  const numCandles = 80;
+  let price = 150;
+  let svgContent = '';
+  const W = 1200, H = 300;
+  const candleW = W / numCandles;
+  const prices = [];
+  for (let i = 0; i < numCandles; i++) {
+    price += (Math.random() - 0.47) * 8;
+    price = Math.max(60, Math.min(240, price));
+    const open = price;
+    const move = (Math.random() - 0.47) * 12;
+    const close = open + move;
+    const high = Math.max(open, close) + Math.random() * 5;
+    const low  = Math.min(open, close) - Math.random() * 5;
+    prices.push({ open, close, high, low });
+  }
+  const allVals = prices.flatMap(c => [c.high, c.low]);
+  const minP = Math.min(...allVals), maxP = Math.max(...allVals);
+  const scaleY = v => H - ((v - minP) / (maxP - minP)) * H;
+
+  prices.forEach((c, i) => {
+    const x = i * candleW + candleW / 2;
+    const bull = c.close >= c.open;
+    const color = bull ? '#00e676' : '#ff1744';
+    const bodyTop = scaleY(Math.max(c.open, c.close));
+    const bodyBot = scaleY(Math.min(c.open, c.close));
+    const bH = Math.max(1, bodyBot - bodyTop);
+    svgContent += `<line x1="${x}" y1="${scaleY(c.high)}" x2="${x}" y2="${scaleY(c.low)}" stroke="${color}" stroke-width="1"/>`;
+    svgContent += `<rect x="${x - candleW * 0.35}" y="${bodyTop}" width="${candleW * 0.7}" height="${bH}" fill="${color}"/>`;
+  });
+  svgEl.innerHTML = svgContent;
+</script>
+</body>
+</html>
