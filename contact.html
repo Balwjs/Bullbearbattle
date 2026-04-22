@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — BullBear Battle</title>
+  <meta name="description" content="Contact the BullBear Battle team for support, feedback, or privacy requests." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bull: #00e676; --bear: #ff1744; --gold: #ffd700;
+      --bg: #080c10; --bg2: #0d1117; --surface: #131920; --surface2: #1a2230;
+      --border: #1e2d3d; --border2: #253040;
+      --text: #e8f0fe; --text2: #8ba3c0; --text3: #4a6070;
+      --accent: #00b4d8; --accent2: #0077b6;
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-mono: 'Space Mono', monospace;
+      --font-body: 'DM Sans', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-body); background: var(--bg); color: var(--text); overflow-x: hidden; line-height: 1.7; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 64px;
+      background: rgba(8,12,16,0.92); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-display); font-size: 1.5rem; letter-spacing: 0.05em;
+      background: linear-gradient(135deg, var(--bull) 0%, var(--accent) 50%, var(--bear) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
+    .nav-links a { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text2); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+
+    /* PAGE HERO */
+    .page-hero {
+      padding: 9rem 2rem 4rem;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,23,68,0.03) 0%, transparent 100%);
+      position: relative; overflow: hidden;
+    }
+    .page-hero-bg {
+      position: absolute; inset: 0; opacity: 0.12;
+      background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(ellipse 100% 100% at 50% 0%, black 20%, transparent 70%);
+    }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 1rem; position: relative; }
+    .page-eyebrow { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--bear); margin-bottom: 1rem; }
+    .page-title { font-family: var(--font-display); font-size: clamp(3rem, 7vw, 5.5rem); line-height: 0.95; letter-spacing: 0.02em; margin-bottom: 1rem; }
+
+    /* TWO COL LAYOUT */
+    .contact-layout {
+      display: grid; grid-template-columns: 1fr 420px;
+      gap: 4rem; padding: 4rem 0;
+    }
+    @media (max-width: 900px) { .contact-layout { grid-template-columns: 1fr; gap: 2.5rem; } }
+
+    /* FORM */
+    .form-card {
+      border: 1px solid var(--border); border-radius: 6px;
+      padding: 2.5rem; background: var(--bg2);
+    }
+    .form-title { font-family: var(--font-display); font-size: 2rem; margin-bottom: 0.35rem; }
+    .form-sub { font-size: 0.875rem; color: var(--text2); margin-bottom: 2.5rem; font-weight: 300; }
+
+    .form-group { margin-bottom: 1.5rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+    @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
+
+    label {
+      display: block; font-family: var(--font-mono); font-size: 0.65rem;
+      letter-spacing: 0.15em; text-transform: uppercase; color: var(--text3);
+      margin-bottom: 0.5rem;
+    }
+    label .req { color: var(--bear); }
+
+    input, select, textarea {
+      width: 100%; padding: 0.85rem 1rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 3px; color: var(--text);
+      font-family: var(--font-body); font-size: 0.95rem;
+      outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none; appearance: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent2);
+      box-shadow: 0 0 0 3px rgba(0,180,216,0.1);
+    }
+    input::placeholder, textarea::placeholder { color: var(--text3); }
+    select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a6070' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; padding-right: 2.5rem; }
+    textarea { resize: vertical; min-height: 130px; }
+
+    /* Checkbox group */
+    .checkbox-group { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.25rem; }
+    .checkbox-item { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; }
+    .checkbox-item input[type="checkbox"] {
+      width: 18px; height: 18px; flex-shrink: 0;
+      border-radius: 2px; padding: 0;
+      accent-color: var(--accent);
+    }
+    .checkbox-item span { font-size: 0.875rem; color: var(--text2); font-weight: 300; }
+
+    /* File upload */
+    .file-upload-label {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.85rem 1rem;
+      background: var(--surface); border: 1px dashed var(--border2);
+      border-radius: 3px; cursor: pointer; transition: border-color 0.2s;
+    }
+    .file-upload-label:hover { border-color: var(--accent2); }
+    .file-upload-label input[type="file"] { display: none; }
+    .file-upload-label span { font-size: 0.875rem; color: var(--text3); }
+    .file-upload-label strong { font-size: 0.875rem; color: var(--text2); }
+
+    /* Submit */
+    .btn-submit {
+      width: 100%; padding: 1rem; margin-top: 0.5rem;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      border: none; border-radius: 3px;
+      color: var(--text); font-family: var(--font-mono);
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em;
+      text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,180,216,0.25); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .form-note { font-size: 0.78rem; color: var(--text3); margin-top: 1rem; line-height: 1.6; }
+    .form-note a { color: var(--text2); }
+
+    /* SUCCESS STATE */
+    .success-screen {
+      display: none; text-align: center; padding: 3rem 1rem;
+    }
+    .success-icon { font-size: 3rem; margin-bottom: 1rem; display: block; }
+    .success-title { font-family: var(--font-display); font-size: 2.5rem; color: var(--bull); margin-bottom: 0.75rem; }
+    .success-msg { color: var(--text2); font-weight: 300; max-width: 340px; margin: 0 auto; }
+
+    /* ERROR */
+    .field-error { font-size: 0.72rem; color: var(--bear); margin-top: 0.35rem; display: none; }
+    input.error, select.error, textarea.error { border-color: rgba(255,23,68,0.5); }
+
+    /* SIDEBAR */
+    .sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
+
+    .info-block {
+      border: 1px solid var(--border); border-radius: 4px;
+      padding: 1.75rem; background: var(--bg2);
+    }
+    .info-block-title {
+      font-family: var(--font-mono); font-size: 0.7rem;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--text3); margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);
+    }
+
+    .info-row { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.25rem; }
+    .info-row:last-child { margin-bottom: 0; }
+    .info-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 0.15rem; }
+    .info-label { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); margin-bottom: 0.2rem; }
+    .info-value { font-size: 0.875rem; color: var(--text2); font-weight: 300; }
+    .info-value strong { color: var(--text); font-weight: 500; }
+    .info-value a { color: var(--accent); text-decoration: none; }
+    .info-value a:hover { text-decoration: underline; }
+
+    /* App info card */
+    .app-badge {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1.25rem; border: 1px solid var(--border);
+      border-radius: 4px; background: var(--surface); margin-bottom: 1rem;
+      text-decoration: none; transition: border-color 0.2s;
+    }
+    .app-badge:hover { border-color: var(--border2); }
+    .app-badge-icon { font-size: 2.5rem; flex-shrink: 0; }
+    .app-badge-info {}
+    .app-badge-name { font-weight: 600; font-size: 0.95rem; color: var(--text); }
+    .app-badge-store { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em; color: var(--text3); text-transform: uppercase; margin-top: 0.15rem; }
+
+    /* RESPONSE TIME INDICATOR */
+    .response-indicator {
+      display: flex; gap: 1rem; margin-top: 0.5rem;
+    }
+    .resp-item { flex: 1; text-align: center; padding: 0.75rem 0.5rem; border: 1px solid var(--border); border-radius: 3px; }
+    .resp-val { font-family: var(--font-display); font-size: 1.5rem; color: var(--bull); }
+    .resp-label { font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.1em; color: var(--text3); text-transform: uppercase; margin-top: 0.2rem; }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); padding: 2.5rem 2rem; margin-top: 2rem; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; }
+    .footer-brand { font-family: var(--font-display); font-size: 1.2rem; background: linear-gradient(135deg, var(--bull), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .footer-links { display: flex; gap: 2rem; list-style: none; flex-wrap: wrap; }
+    .footer-links a { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text2); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--text); }
+    .footer-copy { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text3); letter-spacing: 0.05em; width: 100%; text-align: center; padding-top: 1.5rem; border-top: 1px solid var(--border); margin-top: 0.5rem; }
+
+    @media (max-width: 768px) { nav { padding: 0 1rem; } .nav-links { gap: 1rem; } .nav-links li:nth-child(n+4) { display: none; } }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">BullBear Battle</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="privacy_policy.html">Privacy</a></li>
+    <li><a href="support.html">Support</a></li>
+    <li><a href="contact.html" class="active">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-bg"></div>
+  <div class="container">
+    <p class="page-eyebrow">Reach Out</p>
+    <h1 class="page-title">Contact Us</h1>
+    <p style="color:var(--text2); max-width:520px; font-weight:300; font-size:1rem;">
+      Bug reports, feature ideas, privacy requests, or just to say hello — we read every message.
+    </p>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div style="padding: 0 2rem;">
+  <div class="container">
+    <div class="contact-layout">
+
+      <!-- FORM COL -->
+      <div>
+        <div class="form-card">
+          <!-- Form -->
+          <div id="contactForm">
+            <h2 class="form-title">Send a Message</h2>
+            <p class="form-sub">Fill in the details below and we'll get back to you as soon as possible.</p>
+
+            <div class="form-row">
+              <div>
+                <label>Name <span class="req">*</span></label>
+                <input type="text" id="name" placeholder="Your name" />
+                <p class="field-error" id="nameErr">Please enter your name.</p>
+              </div>
+              <div>
+                <label>Email <span class="req">*</span></label>
+                <input type="email" id="email" placeholder="your@email.com" />
+                <p class="field-error" id="emailErr">Please enter a valid email address.</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Subject / Category <span class="req">*</span></label>
+              <select id="subject">
+                <option value="">— Select a category —</option>
+                <option value="bug">🐛 Bug Report</option>
+                <option value="gameplay">🎮 Gameplay Question</option>
+                <option value="achievement">🏆 Achievement / Progress Issue</option>
+                <option value="privacy">🔒 Privacy / Data Request</option>
+                <option value="ads">📢 Advertising Feedback</option>
+                <option value="feature">💡 Feature Request</option>
+                <option value="feedback">⭐ General Feedback</option>
+                <option value="other">❓ Other</option>
+              </select>
+              <p class="field-error" id="subjectErr">Please select a category.</p>
+            </div>
+
+            <div class="form-group" id="platformGroup" style="display:none;">
+              <label>Platform</label>
+              <select id="platform">
+                <option value="">— Select platform —</option>
+                <option value="ios">iOS (App Store)</option>
+                <option value="android">Android (Google Play)</option>
+                <option value="both">Both</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="deviceGroup" style="display:none;">
+              <label>Device &amp; OS Version <small style="text-transform:none;letter-spacing:0;">(optional but helpful)</small></label>
+              <input type="text" id="device" placeholder="e.g. iPhone 15 Pro / iOS 17.4 or Samsung S24 / Android 14" />
+            </div>
+
+            <div class="form-group">
+              <label>App Version <small style="text-transform:none;letter-spacing:0;">(optional)</small></label>
+              <input type="text" id="appVersion" placeholder="e.g. v2.0.0" />
+            </div>
+
+            <div class="form-group">
+              <label>Message <span class="req">*</span></label>
+              <textarea id="message" placeholder="Describe your issue, question, or feedback in detail. For bug reports: include steps to reproduce, what you expected, and what actually happened."></textarea>
+              <p class="field-error" id="messageErr">Please enter a message (min 20 characters).</p>
+            </div>
+
+            <div class="form-group" id="screenshotGroup" style="display:none;">
+              <label>Screenshot <small style="text-transform:none;letter-spacing:0;">(optional)</small></label>
+              <label class="file-upload-label" for="screenshot">
+                <input type="file" id="screenshot" accept="image/*" onchange="handleFile(this)" />
+                <span>📎</span>
+                <div>
+                  <strong id="fileLabel">Tap to attach screenshot</strong>
+                  <span style="display:block; margin-top:0.15rem">PNG, JPG or HEIC • Max 5 MB</span>
+                </div>
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label>Consent <span class="req">*</span></label>
+              <div class="checkbox-group">
+                <label class="checkbox-item">
+                  <input type="checkbox" id="consent" />
+                  <span>I agree that this message and my email address may be stored for the purpose of responding to my inquiry. See our <a href="privacy_policy.html" style="color:var(--accent)">Privacy Policy</a>.</span>
+                </label>
+              </div>
+              <p class="field-error" id="consentErr">You must agree to continue.</p>
+            </div>
+
+            <button class="btn-submit" id="submitBtn" onclick="submitForm()">
+              ↗ Send Message
+            </button>
+
+            <p class="form-note">
+              * Required fields. We respond to all messages within <strong style="color:var(--text2)">48 business hours</strong>. For privacy data requests, allow up to 30 days per GDPR requirements.
+            </p>
+          </div>
+
+          <!-- SUCCESS -->
+          <div class="success-screen" id="successScreen">
+            <span class="success-icon">✅</span>
+            <h2 class="success-title">Message Sent!</h2>
+            <p class="success-msg">Thanks for reaching out. We've received your message and will respond to <span id="confirmEmail" style="color:var(--accent)"></span> within 48 business hours.</p>
+            <button onclick="resetForm()" style="margin-top:2rem; font-family:var(--font-mono); font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; padding:0.75rem 2rem; background:var(--surface2); border:1px solid var(--border2); color:var(--text); border-radius:3px; cursor:pointer;">Send Another →</button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SIDEBAR -->
+      <div class="sidebar">
+
+        <!-- Response times -->
+        <div class="info-block">
+          <p class="info-block-title">Response Times</p>
+          <div class="response-indicator">
+            <div class="resp-item">
+              <div class="resp-val">48h</div>
+              <div class="resp-label">General</div>
+            </div>
+            <div class="resp-item">
+              <div class="resp-val">24h</div>
+              <div class="resp-label">Bug Reports</div>
+            </div>
+            <div class="resp-item">
+              <div class="resp-val">30d</div>
+              <div class="resp-label">GDPR / Data</div>
+            </div>
+          </div>
+          <p style="font-size:0.78rem; color:var(--text3); margin-top:1rem; font-family:var(--font-mono); font-size:0.65rem; letter-spacing:0.05em;">Business days only. Mon–Fri, IST (GMT+5:30).</p>
+        </div>
+
+        <!-- Developer Info -->
+        <div class="info-block">
+          <p class="info-block-title">About the Developer</p>
+          <div class="info-row">
+            <span class="info-icon">👤</span>
+            <div>
+              <p class="info-label">Developer</p>
+              <p class="info-value"><strong>Balwinder Singh</strong><br/>Independent / Solo Developer</p>
+            </div>
+          </div>
+          <div class="info-row">
+            <span class="info-icon">🇮🇳</span>
+            <div>
+              <p class="info-label">Location</p>
+              <p class="info-value">India</p>
+            </div>
+          </div>
+          <div class="info-row">
+            <span class="info-icon">📱</span>
+            <div>
+              <p class="info-label">App</p>
+              <p class="info-value"><strong>BullBear Battle</strong> v2.0.0<br/>iOS &amp; Android</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Download Links -->
+        <div class="info-block">
+          <p class="info-block-title">Download the App</p>
+          <a href="#" class="app-badge">
+            <span class="app-badge-icon"></span>
+            <div class="app-badge-info">
+              <p class="app-badge-name">BullBear Battle</p>
+              <p class="app-badge-store">App Store · iOS 16+</p>
+            </div>
+          </a>
+          <a href="#" class="app-badge">
+            <span class="app-badge-icon">▶</span>
+            <div class="app-badge-info">
+              <p class="app-badge-name">BullBear Battle</p>
+              <p class="app-badge-store">Google Play · Android 8+</p>
+            </div>
+          </a>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="info-block">
+          <p class="info-block-title">Quick Links</p>
+          <div class="info-row">
+            <span class="info-icon">📖</span>
+            <div>
+              <p class="info-label">Support Centre</p>
+              <p class="info-value"><a href="support.html">FAQs &amp; Troubleshooting →</a></p>
+            </div>
+          </div>
+          <div class="info-row">
+            <span class="info-icon">🔒</span>
+            <div>
+              <p class="info-label">Privacy Policy</p>
+              <p class="info-value"><a href="privacy_policy.html">Full Privacy Policy →</a></p>
+            </div>
+          </div>
+          <div class="info-row" style="margin-bottom:0">
+            <span class="info-icon">⚠️</span>
+            <div>
+              <p class="info-label">Disclaimer</p>
+              <p class="info-value" style="font-size:0.8rem;">BullBear Battle is a simulation game. No real money, investments, or financial advice.</p>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /sidebar -->
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <span class="footer-brand">BullBear Battle</span>
+    <ul class="footer-links">
+      <li><a href="privacy_policy.html">Privacy Policy</a></li>
+      <li><a href="support.html">Support</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <p class="footer-copy">© 2026 Balwinder Singh. BullBear Battle is not a financial product. All trading is simulated.</p>
+  </div>
+</footer>
+
+<script>
+  // Show/hide conditional fields based on subject
+  document.getElementById('subject').addEventListener('change', function() {
+    const v = this.value;
+    const isBug = v === 'bug' || v === 'technical';
+    const showPlatform = ['bug','gameplay','achievement','feature'].includes(v);
+    document.getElementById('platformGroup').style.display = showPlatform ? 'block' : 'none';
+    document.getElementById('deviceGroup').style.display = isBug ? 'block' : 'none';
+    document.getElementById('screenshotGroup').style.display = isBug ? 'block' : 'none';
+  });
+
+  // File handler
+  function handleFile(input) {
+    const f = input.files[0];
+    if (f) {
+      if (f.size > 5 * 1024 * 1024) {
+        alert('File must be under 5 MB.');
+        input.value = '';
+        return;
+      }
+      document.getElementById('fileLabel').textContent = '✅ ' + f.name;
+    }
+  }
+
+  // Validation
+  function validate() {
+    let ok = true;
+    const setErr = (id, errId, cond) => {
+      const el = document.getElementById(id);
+      const err = document.getElementById(errId);
+      if (cond) { el.classList.add('error'); err.style.display = 'block'; ok = false; }
+      else { el.classList.remove('error'); err.style.display = 'none'; }
+    };
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const subject = document.getElementById('subject').value;
+    const message = document.getElementById('message').value.trim();
+    const consent = document.getElementById('consent').checked;
+
+    setErr('name', 'nameErr', !name);
+    setErr('email', 'emailErr', !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+    setErr('subject', 'subjectErr', !subject);
+    setErr('message', 'messageErr', message.length < 20);
+
+    const consentErr = document.getElementById('consentErr');
+    if (!consent) { consentErr.style.display = 'block'; ok = false; }
+    else { consentErr.style.display = 'none'; }
+
+    return ok;
+  }
+
+  function submitForm() {
+    if (!validate()) return;
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    // Simulate submission (replace with real Formspree/Netlify endpoint)
+    setTimeout(() => {
+      const email = document.getElementById('email').value.trim();
+      document.getElementById('confirmEmail').textContent = email;
+      document.getElementById('contactForm').style.display = 'none';
+      document.getElementById('successScreen').style.display = 'block';
+    }, 1200);
+  }
+
+  function resetForm() {
+    document.getElementById('contactForm').style.display = 'block';
+    document.getElementById('successScreen').style.display = 'none';
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('submitBtn').textContent = '↗ Send Message';
+    document.getElementById('name').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('subject').value = '';
+    document.getElementById('message').value = '';
+    document.getElementById('consent').checked = false;
+    document.getElementById('appVersion').value = '';
+    document.getElementById('platformGroup').style.display = 'none';
+    document.getElementById('deviceGroup').style.display = 'none';
+    document.getElementById('screenshotGroup').style.display = 'none';
+  }
+
+  // Live validation on blur
+  ['name','email','message'].forEach(id => {
+    document.getElementById(id).addEventListener('blur', validate);
+  });
+</script>
+</body>
+</html>
